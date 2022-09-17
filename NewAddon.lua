@@ -1,8 +1,6 @@
-
 NewAddon = {};
 NewAddon.fully_loaded = false;
 NewAddon.default_options = {
-
 	-- main frame position
 	frameRef = "CENTER",
 	frameX = 0,
@@ -16,7 +14,6 @@ NewAddon.default_options = {
 
 
 function NewAddon.OnReady()
-
 	-- set up default options
 	_G.NewAddonPrefs = _G.NewAddonPrefs or {};
 
@@ -30,7 +27,6 @@ function NewAddon.OnReady()
 end
 
 function NewAddon.OnSaving()
-
 	if (NewAddon.UIFrame) then
 		local point, relativeTo, relativePoint, xOfs, yOfs = NewAddon.UIFrame:GetPoint()
 		_G.NewAddonPrefs.frameRef = relativePoint;
@@ -44,7 +40,7 @@ function NewAddon.OnUpdate()
 		return;
 	end
 
-	if (NewAddonPrefs.hide) then 
+	if (NewAddonPrefs.hide) then
 		return;
 	end
 
@@ -52,7 +48,6 @@ function NewAddon.OnUpdate()
 end
 
 function NewAddon.OnEvent(frame, event, ...)
-
 	if (event == 'ADDON_LOADED') then
 		local name = ...;
 		if name == 'NewAddon' then
@@ -104,7 +99,7 @@ function NewAddon.CreateUIFrame()
 	NewAddon.Cover:RegisterForDrag("LeftButton");
 	NewAddon.Cover:SetScript("OnDragStart", NewAddon.OnDragStart);
 	NewAddon.Cover:SetScript("OnDragStop", NewAddon.OnDragStop);
-	NewAddon.Cover:SetScript("OnClick", NewAddon.OnClick);
+	-- NewAddon.Cover:SetScript("OnClick", NewAddon.OnClick);
 
 	-- add a main label - just so we can show something
 	NewAddon.Label = NewAddon.Cover:CreateFontString(nil, "OVERLAY");
@@ -117,7 +112,6 @@ function NewAddon.CreateUIFrame()
 end
 
 function NewAddon.SetFontSize(string, size)
-
 	local Font, Height, Flags = string:GetFont()
 	if (not (Height == size)) then
 		string:SetFont(Font, size, Flags)
@@ -136,17 +130,31 @@ function NewAddon.OnDragStop(frame)
 end
 
 function NewAddon.OnClick(self, aButton)
-	if (aButton == "RightButton") then
-		print("show menu here!");
-	end
+    if (aButton == "RightButton") then
+        print('hiding');
+        NewAddon.UIFrame:Hide()
+    end
 end
 
 function NewAddon.UpdateFrame()
+    local savedHcInsanceNames = {}
+    local numSavedInstances = GetNumSavedInstances()
 
-	-- update the main frame state here
-	NewAddon.Label:SetText(string.format("%d", GetTime()));
+    table.insert(savedHcInsanceNames, 'Locked HC instances:\n\n')
+
+    for i = 0, numSavedInstances do
+        local name, id, reset, difficulty,
+            locked, extended, instanceIDMostSig,
+            isRaid, maxPlayers, difficultyName,
+            numEncounters, encounterProgress = GetSavedInstanceInfo(i)
+
+        if (difficultyName == "Heroic" and locked) then
+            table.insert(savedHcInsanceNames, name)
+        end
+
+        NewAddon.Label:SetText(table.concat(savedHcInsanceNames, '\n'));
+    end
 end
-
 
 NewAddon.EventFrame = CreateFrame("Frame");
 NewAddon.EventFrame:Show();
