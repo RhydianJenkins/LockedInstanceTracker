@@ -80,8 +80,6 @@ function LockedInstanceTracker.RenderTextToFrame()
     local savedHcInsanceNames = {}
     local numSavedInstances = GetNumSavedInstances()
 
-    table.insert(savedHcInsanceNames, 'Locked HC instances:\n\n')
-
     for i = 0, numSavedInstances do
         local name, id, reset, difficulty,
             locked, extended, instanceIDMostSig,
