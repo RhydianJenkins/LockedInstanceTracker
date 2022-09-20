@@ -108,6 +108,7 @@ end
 function LockedInstanceTracker.OnClick(self, aButton)
     if (aButton == "RightButton") then
         LockedInstanceTracker.UIFrame:Hide()
+        LockedInstanceTracker.OnSaving()
     end
 end
 
