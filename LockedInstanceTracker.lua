@@ -114,9 +114,11 @@ end
 function LockedInstanceTracker.OnSaving()
 	if (LockedInstanceTracker.UIFrame) then
 		local point, relativeTo, relativePoint, xOfs, yOfs = LockedInstanceTracker.UIFrame:GetPoint()
+        local shown = LockedInstanceTracker.UIFrame:IsShown()
 		_G.LockedInstanceTrackerPrefs.frameRef = relativePoint;
 		_G.LockedInstanceTrackerPrefs.frameX = xOfs;
 		_G.LockedInstanceTrackerPrefs.frameY = yOfs;
+		_G.LockedInstanceTrackerPrefs.hide = not shown;
 	end
 end
 
@@ -138,6 +140,18 @@ function LockedInstanceTracker.OnEvent(frame, event, ...)
         LockedInstanceTracker.OnSaving();
         return;
     end
+end
+
+SLASH_LOCKS1 = '/locks'
+SlashCmdList['LOCKS'] = function (msg, editbox)
+    if (LockedInstanceTrackerPrefs.hide) then
+        LockedInstanceTracker.UIFrame:Show()
+    else
+        LockedInstanceTracker.UIFrame:Hide()
+    end
+
+    LockedInstanceTracker.OnUpdate()
+    LockedInstanceTracker.OnSaving()
 end
 
 LockedInstanceTracker.EventFrame = CreateFrame("Frame");
