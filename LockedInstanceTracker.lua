@@ -84,6 +84,24 @@ function LockedInstanceTracker.RenderTextToFrame()
     LockedInstanceTracker.Label:SetText(table.concat(savedHcInsanceNames, '\n'));
 end
 
+function LockedInstanceTracker.OnDragStart(frame)
+    LockedInstanceTracker.UIFrame:StartMoving();
+    LockedInstanceTracker.UIFrame.isMoving = true;
+    GameTooltip:Hide()
+end
+
+function LockedInstanceTracker.OnDragStop(frame)
+    LockedInstanceTracker.UIFrame:StopMovingOrSizing();
+    LockedInstanceTracker.UIFrame.isMoving = false;
+end
+
+function LockedInstanceTracker.OnClick(self, aButton)
+    if (aButton == "RightButton") then
+        print('hiding');
+        LockedInstanceTracker.UIFrame:Hide()
+    end
+end
+
 function LockedInstanceTracker.OnEvent(frame, event, ...)
     if (event == 'ADDON_LOADED') then
         local name = ...;
