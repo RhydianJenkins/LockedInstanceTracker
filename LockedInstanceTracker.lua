@@ -21,7 +21,18 @@ function LockedInstanceTracker.OnReady()
 	end
 
     LockedInstanceTracker.CreateUIFrame()
-    LockedInstanceTracker.RenderTextToFrame()
+end
+
+function LockedInstanceTracker.OnUpdate()
+	if (not LockedInstanceTracker.fully_loaded) then
+		return;
+	end
+
+	if (LockedInstanceTrackerPrefs.hide) then
+		return;
+	end
+
+	LockedInstanceTracker.RenderTextToFrame();
 end
 
 function LockedInstanceTracker.CreateUIFrame()
@@ -54,6 +65,7 @@ function LockedInstanceTracker.CreateUIFrame()
 	LockedInstanceTracker.Cover:RegisterForDrag("LeftButton");
 	LockedInstanceTracker.Cover:SetScript("OnDragStart", LockedInstanceTracker.OnDragStart);
 	LockedInstanceTracker.Cover:SetScript("OnDragStop", LockedInstanceTracker.OnDragStop);
+    LockedInstanceTracker.Cover:SetScript("OnClick", LockedInstanceTracker.OnClick);
 
 	-- add a main label - just so we can show something
 	LockedInstanceTracker.Label = LockedInstanceTracker.Cover:CreateFontString(nil, "OVERLAY");
@@ -97,9 +109,17 @@ end
 
 function LockedInstanceTracker.OnClick(self, aButton)
     if (aButton == "RightButton") then
-        print('hiding');
         LockedInstanceTracker.UIFrame:Hide()
     end
+end
+
+function LockedInstanceTracker.OnSaving()
+	if (LockedInstanceTracker.UIFrame) then
+		local point, relativeTo, relativePoint, xOfs, yOfs = LockedInstanceTracker.UIFrame:GetPoint()
+		_G.LockedInstanceTrackerPrefs.frameRef = relativePoint;
+		_G.LockedInstanceTrackerPrefs.frameX = xOfs;
+		_G.LockedInstanceTrackerPrefs.frameY = yOfs;
+	end
 end
 
 function LockedInstanceTracker.OnEvent(frame, event, ...)
