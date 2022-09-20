@@ -12,9 +12,10 @@ LockedInstanceTracker.default_options = {
 	frameH = 200,
 };
 
+local savedHcInsanceNames = {}
+local numSavedInstances = GetNumSavedInstances()
 
 function LockedInstanceTracker.OnReady()
-	-- set up default options
 	_G.LockedInstanceTrackerPrefs = _G.LockedInstanceTrackerPrefs or {};
 
 	for k,v in pairs(LockedInstanceTracker.default_options) do
@@ -22,6 +23,18 @@ function LockedInstanceTracker.OnReady()
 			_G.LockedInstanceTrackerPrefs[k] = v;
 		end
 	end
+
+    table.insert(savedHcInsanceNames, 'Locked HC instances:\n\n')
+    for i = 0, numSavedInstances do
+        local name, id, reset, difficulty,
+            locked, extended, instanceIDMostSig,
+            isRaid, maxPlayers, difficultyName,
+            numEncounters, encounterProgress = GetSavedInstanceInfo(i)
+
+        if (difficultyName == "Heroic" and locked) then
+            table.insert(savedHcInsanceNames, name)
+        end
+    end
 
 	LockedInstanceTracker.CreateUIFrame();
 end
@@ -40,9 +53,9 @@ function LockedInstanceTracker.OnUpdate()
 		return;
 	end
 
-	if (LockedInstanceTrackerPrefs.hide) then
-		return;
-	end
+	-- if (_G.LockedInstanceTrackerPrefs.hide) then
+		-- return;
+	-- end
 
 	LockedInstanceTracker.UpdateFrame();
 end
@@ -57,7 +70,6 @@ function LockedInstanceTracker.OnEvent(frame, event, ...)
 	end
 
 	if (event == 'PLAYER_LOGIN') then
-
 		LockedInstanceTracker.fully_loaded = true;
 		return;
 	end
@@ -69,7 +81,6 @@ function LockedInstanceTracker.OnEvent(frame, event, ...)
 end
 
 function LockedInstanceTracker.CreateUIFrame()
-
 	-- create the UI frame
 	LockedInstanceTracker.UIFrame = CreateFrame("Frame",nil,UIParent);
 	LockedInstanceTracker.UIFrame:SetFrameStrata("BACKGROUND")
@@ -137,23 +148,7 @@ function LockedInstanceTracker.OnClick(self, aButton)
 end
 
 function LockedInstanceTracker.UpdateFrame()
-    local savedHcInsanceNames = {}
-    local numSavedInstances = GetNumSavedInstances()
-
-    table.insert(savedHcInsanceNames, 'Locked HC instances:\n\n')
-
-    for i = 0, numSavedInstances do
-        local name, id, reset, difficulty,
-            locked, extended, instanceIDMostSig,
-            isRaid, maxPlayers, difficultyName,
-            numEncounters, encounterProgress = GetSavedInstanceInfo(i)
-
-        if (difficultyName == "Heroic" and locked) then
-            table.insert(savedHcInsanceNames, name)
-        end
-
-        LockedInstanceTracker.Label:SetText(table.concat(savedHcInsanceNames, '\n'));
-    end
+    LockedInstanceTracker.Label:SetText(table.concat(savedHcInsanceNames, '\n'));
 end
 
 LockedInstanceTracker.EventFrame = CreateFrame("Frame");
