@@ -106,6 +106,10 @@ function LockedInstanceTracker.OnDragStop(frame)
 end
 
 function LockedInstanceTracker.OnClick(self, aButton)
+    if (not LockedInstanceTracker.UIFrame:IsShown()) then
+        return
+    end
+
     if (aButton == "RightButton") then
         LockedInstanceTracker.UIFrame:Hide()
         LockedInstanceTracker.OnSaving()
